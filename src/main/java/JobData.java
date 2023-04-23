@@ -5,10 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -20,12 +17,13 @@ public class JobData {
 
     private static ArrayList<HashMap<String, String>> allJobs;
 
+
     /**
      * Fetch list of all values from loaded data,
      * without duplicates, for a given column.
      *
      * @param field The column to retrieve values from
-     * @return List of all of the values of the given field
+     * @return List of all the values of the given field
      */
     public static ArrayList<String> findAll(String field) {
 
@@ -35,7 +33,8 @@ public class JobData {
         ArrayList<String> values = new ArrayList<>();
 
         for (HashMap<String, String> row : allJobs) {
-            String aValue = row.get(field);
+
+            String aValue = row.get(field.toLowerCase());
 
             if (!values.contains(aValue)) {
                 values.add(aValue);
@@ -79,7 +78,7 @@ public class JobData {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
@@ -98,8 +97,19 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        // TODO - implement this method
-        return null;
+        //will store list of all jobs containing the searched value
+        ArrayList<HashMap<String, String>> jobsList = new ArrayList<>();
+
+        for (HashMap<String, String> job : allJobs) {
+
+            for (Object column : job.keySet()) {
+
+                if ( job.get(column).contains(value.toLowerCase()) && !jobsList.contains(job) ) {
+                    jobsList.add(job);
+                }
+            }
+        }
+        return jobsList;
     }
 
     /**
@@ -128,7 +138,7 @@ public class JobData {
                 HashMap<String, String> newJob = new HashMap<>();
 
                 for (String headerLabel : headers) {
-                    newJob.put(headerLabel, record.get(headerLabel));
+                    newJob.put(headerLabel, record.get(headerLabel).toLowerCase());
                 }
 
                 allJobs.add(newJob);
