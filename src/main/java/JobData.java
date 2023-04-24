@@ -5,10 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -20,12 +17,13 @@ public class JobData {
 
     private static ArrayList<HashMap<String, String>> allJobs;
 
+
     /**
      * Fetch list of all values from loaded data,
      * without duplicates, for a given column.
      *
      * @param field The column to retrieve values from
-     * @return List of all of the values of the given field
+     * @return List of all the values of the given field
      */
     public static ArrayList<String> findAll(String field) {
 
@@ -35,6 +33,7 @@ public class JobData {
         ArrayList<String> values = new ArrayList<>();
 
         for (HashMap<String, String> row : allJobs) {
+
             String aValue = row.get(field);
 
             if (!values.contains(aValue)) {
@@ -77,9 +76,9 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column).toLowerCase();
 
-            if (aValue.contains(value)) {
+            if (aValue.contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
@@ -93,13 +92,42 @@ public class JobData {
      * @param value The search term to look for
      * @return      List of all jobs with at least one field containing the value
      */
-    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+    public static ArrayList<HashMap<String, String>> findByValue(String searchVal) {
 
         // load data, if not already loaded
         loadData();
 
-        // TODO - implement this method
-        return null;
+        //will store list of all jobs containing the searched value
+        ArrayList<HashMap<String, String>> jobsList = new ArrayList<>();
+
+        for (HashMap<String, String> job : allJobs) {
+
+            for (Object column : job.keySet()) {
+                String jobValueLowercase = job.get(column).toLowerCase();
+
+                if ( jobValueLowercase.contains(searchVal.toLowerCase()) && !jobsList.contains(job) ) {
+                    jobsList.add(job);
+                }
+            }
+        }
+        return jobsList;
+    }
+
+    //returns allJobs with all values lowercase
+    private static ArrayList<HashMap<String, String>> lowerCaseData() {
+
+        ArrayList<HashMap<String, String>> lowerCaseJobs = new ArrayList<HashMap<String, String>>();
+
+        for (HashMap<String, String> job : allJobs) {
+
+            HashMap<String, String> lowerCaseJob = new HashMap<String, String>();
+
+            for (String column : job.keySet()) {
+                lowerCaseJob.put(column, job.get(column).toLowerCase());
+            }
+            lowerCaseJobs.add(lowerCaseJob);
+        }
+        return lowerCaseJobs;
     }
 
     /**
