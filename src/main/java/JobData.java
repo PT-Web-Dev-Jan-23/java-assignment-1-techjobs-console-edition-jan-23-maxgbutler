@@ -34,7 +34,7 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(field.toLowerCase());
+            String aValue = row.get(field);
 
             if (!values.contains(aValue)) {
                 values.add(aValue);
@@ -76,7 +76,7 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column).toLowerCase();
 
             if (aValue.contains(value.toLowerCase())) {
                 jobs.add(row);
@@ -92,7 +92,7 @@ public class JobData {
      * @param value The search term to look for
      * @return      List of all jobs with at least one field containing the value
      */
-    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+    public static ArrayList<HashMap<String, String>> findByValue(String searchVal) {
 
         // load data, if not already loaded
         loadData();
@@ -103,13 +103,31 @@ public class JobData {
         for (HashMap<String, String> job : allJobs) {
 
             for (Object column : job.keySet()) {
+                String jobValueLowercase = job.get(column).toLowerCase();
 
-                if ( job.get(column).contains(value.toLowerCase()) && !jobsList.contains(job) ) {
+                if ( jobValueLowercase.contains(searchVal.toLowerCase()) && !jobsList.contains(job) ) {
                     jobsList.add(job);
                 }
             }
         }
         return jobsList;
+    }
+
+    //returns allJobs with all values lowercase
+    private static ArrayList<HashMap<String, String>> lowerCaseData() {
+
+        ArrayList<HashMap<String, String>> lowerCaseJobs = new ArrayList<HashMap<String, String>>();
+
+        for (HashMap<String, String> job : allJobs) {
+
+            HashMap<String, String> lowerCaseJob = new HashMap<String, String>();
+
+            for (String column : job.keySet()) {
+                lowerCaseJob.put(column, job.get(column).toLowerCase());
+            }
+            lowerCaseJobs.add(lowerCaseJob);
+        }
+        return lowerCaseJobs;
     }
 
     /**
@@ -138,7 +156,7 @@ public class JobData {
                 HashMap<String, String> newJob = new HashMap<>();
 
                 for (String headerLabel : headers) {
-                    newJob.put(headerLabel, record.get(headerLabel).toLowerCase());
+                    newJob.put(headerLabel, record.get(headerLabel));
                 }
 
                 allJobs.add(newJob);
